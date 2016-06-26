@@ -132,4 +132,23 @@ defmodule Todo do
   """
   def update_entry(todo_list, %{} = new_entry),
     do: update_entry(todo_list, new_entry.id, fn(_) -> new_entry end)
+
+  @doc """
+  Delete a entry from the to-do list.
+
+  ## Example:
+
+      iex> Todo.new
+      ...> |> Todo.add_entry(%{date: {2016, 06, 26}, title: "Code"})
+      ...> |> Todo.add_entry(%{date: {2016, 06, 26}, title: "Code more"})
+      ...> |> Todo.delete_entry(2)
+      %Todo{
+        auto_id: 3,
+        entries: %{
+          1 => %{id: 1, date: {2016, 06, 26}, title: "Code"},
+        }
+      }
+  """
+  def delete_entry(%__MODULE__{entries: entries} = todo_list, entry_id),
+    do: %__MODULE__{todo_list | entries: Map.delete(entries, entry_id)}
 end
