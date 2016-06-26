@@ -20,7 +20,7 @@ defmodule Todo do
       iex> Todo.new
       %{}
   """
-  def new, do: %{}
+  def new, do: MultiDict.new
 
   @doc """
   Add new entry to the date in the to-do list.
@@ -36,7 +36,7 @@ defmodule Todo do
       %{{2016, 06, 26} => ["Code more", "Code"]}
   """
   def add_entry(todo_list, date, title),
-    do: Map.update(todo_list, date, [title], &([title | &1]))
+    do: MultiDict.add(todo_list, date, title)
 
   @doc """
   Get all entries for one date.
@@ -53,5 +53,5 @@ defmodule Todo do
       ...> |> Todo.entries({2016, 06, 28})
       []
   """
-  def entries(todo_list, date), do: Map.get(todo_list, date, [])
+  def entries(todo_list, date), do: MultiDict.get(todo_list, date)
 end
