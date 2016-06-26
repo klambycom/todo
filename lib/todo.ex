@@ -5,11 +5,12 @@ defmodule Todo do
   ## Example
 
       iex> Todo.new
-      ...> |> Todo.add_entry({2013, 12, 19}, "Dentist")
-      ...> |> Todo.add_entry({2013, 12, 20}, "Shopping")
-      ...> |> Todo.add_entry({2013, 12, 19}, "Movies")
+      ...> |> Todo.add_entry(%{date: {2013, 12, 19}, title: "Dentist"})
+      ...> |> Todo.add_entry(%{date: {2013, 12, 20}, title: "Shopping"})
+      ...> |> Todo.add_entry(%{date: {2013, 12, 19}, title: "Movies"})
       ...> |> Todo.entries({2013, 12, 19})
-      ["Movies", "Dentist"]
+      [%{date: {2013, 12, 19}, title: "Movies"},
+      %{date: {2013, 12, 19}, title: "Dentist"}]
   """
 
   @doc """
@@ -27,16 +28,19 @@ defmodule Todo do
 
   ## Example
 
-      iex> Todo.new |> Todo.add_entry({2016, 06, 26}, "Code")
-      %{{2016, 06, 26} => ["Code"]}
+      iex> Todo.new |> Todo.add_entry(%{date: {2016, 06, 26}, title: "Code"})
+      %{{2016, 06, 26} => [%{date: {2016, 06, 26}, title: "Code"}]}
 
       iex> Todo.new
-      ...> |> Todo.add_entry({2016, 06, 26}, "Code")
-      ...> |> Todo.add_entry({2016, 06, 26}, "Code more")
-      %{{2016, 06, 26} => ["Code more", "Code"]}
+      ...> |> Todo.add_entry(%{date: {2016, 06, 26}, title: "Code"})
+      ...> |> Todo.add_entry(%{date: {2016, 06, 26}, title: "Code more"})
+      %{{2016, 06, 26} => [
+        %{date: {2016, 06, 26}, title: "Code more"},
+        %{date: {2016, 06, 26}, title: "Code"}
+      ]}
   """
-  def add_entry(todo_list, date, title),
-    do: MultiDict.add(todo_list, date, title)
+  def add_entry(todo_list, entry),
+    do: MultiDict.add(todo_list, entry.date, entry)
 
   @doc """
   Get all entries for one date.
@@ -44,12 +48,12 @@ defmodule Todo do
   ## Example
 
       iex> Todo.new
-      ...> |> Todo.add_entry({2016, 06, 26}, "Code")
+      ...> |> Todo.add_entry(%{date: {2016, 06, 26}, title: "Code"})
       ...> |> Todo.entries({2016, 06, 26})
-      ["Code"]
+      [%{date: {2016, 06, 26}, title: "Code"}]
 
       iex> Todo.new
-      ...> |> Todo.add_entry({2016, 06, 26}, "Code")
+      ...> |> Todo.add_entry(%{date: {2016, 06, 26}, title: "Code"})
       ...> |> Todo.entries({2016, 06, 28})
       []
   """
