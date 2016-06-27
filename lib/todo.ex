@@ -16,14 +16,31 @@ defmodule Todo do
   defstruct auto_id: 1, entries: %{}
 
   @doc """
-  Create new empty to-do list.
+  Create new to-do list.
 
   ## Example
 
       iex> Todo.new
       %Todo{}
+
+  But it can also be created from a list of entries.
+
+      iex> Todo.new([
+      ...>   %{date: {2016, 06, 19}, title: "Dentist"},
+      ...>   %{date: {2016, 06, 20}, title: "Shopping"},
+      ...>   %{date: {2016, 06, 19}, title: "Movies"}
+      ...> ])
+      %Todo{
+        auto_id: 4,
+        entries: %{
+          1 => %{id: 1, date: {2016, 06, 19}, title: "Dentist"},
+          2 => %{id: 2, date: {2016, 06, 20}, title: "Shopping"},
+          3 => %{id: 3, date: {2016, 06, 19}, title: "Movies"}
+        }
+      }
   """
-  def new, do: %__MODULE__{}
+  def new(entries \\ []),
+    do: Enum.reduce(entries, %__MODULE__{}, &add_entry(&2, &1))
 
   @doc """
   Add new entry to the date in the to-do list.
