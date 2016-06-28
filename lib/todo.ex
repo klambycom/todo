@@ -169,3 +169,14 @@ defmodule Todo do
   def delete_entry(%__MODULE__{entries: entries} = todo_list, entry_id),
     do: %__MODULE__{todo_list | entries: Map.delete(entries, entry_id)}
 end
+
+defimpl Collectable, for: Todo do
+  def into(original), do: {original, &into_callback/2}
+
+  defp into_callback(todo_list, {:cont, entry}),
+    do: Todo.add_entry(todo_list, entry)
+
+  defp into_callback(todo_list, :done), do: todo_list
+
+  defp into_callback(_, :halt), do: :ok
+end
