@@ -51,6 +51,21 @@ defmodule TodoServer do
   def update_entry(todo_server, entry_id, updater_fun),
     do: send(todo_server, {:update_entry, entry_id, updater_fun})
 
+  @doc """
+  Delete a entry from the to-do list.
+
+  ## Example:
+
+      iex> ts = TodoServer.start
+      ...> TodoServer.add_entry(ts, %{date: {2016, 06, 26}, title: "Code"})
+      ...> TodoServer.add_entry(ts, %{date: {2016, 06, 26}, title: "Code more"})
+      ...> TodoServer.delete_entry(ts, 2)
+      ...> TodoServer.entries(ts, {2016, 06, 26})
+      [%{id: 1, date: {2016, 06, 26}, title: "Code"}]
+  """
+  def delete_entry(todo_server, entry_id),
+    do: send(todo_server, {:delete_entry, entry_id})
+
   defp loop(todo_list) do
     new_todo_list = receive do
       message ->
@@ -70,6 +85,9 @@ defmodule TodoServer do
 
   defp process_message(todo_list, {:update_entry, entry_id, updater_fun}),
     do: Todo.update_entry(todo_list, entry_id, updater_fun)
+
+  defp process_message(todo_list, {:delete_entry, entry_id}),
+    do: Todo.delete_entry(todo_list, entry_id)
 
   defp process_message(todo_list, _), do: todo_list
 end
