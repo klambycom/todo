@@ -37,6 +37,20 @@ defmodule TodoServer do
     end
   end
 
+  @doc """
+  Update a entry in the to-do list with a update function.
+
+  ## Example
+
+      iex> ts = TodoServer.start
+      ...> TodoServer.add_entry(ts, %{date: {2016, 06, 26}, title: "Code"})
+      ...> TodoServer.update_entry(ts, 1, &Map.put(&1, :date, {2016, 06, 28}))
+      ...> TodoServer.entries(ts, {2016, 06, 28})
+      [%{id: 1, date: {2016, 06, 28}, title: "Code"}]
+  """
+  def update_entry(todo_server, entry_id, updater_fun),
+    do: send(todo_server, {:update_entry, entry_id, updater_fun})
+
   defp loop(todo_list) do
     new_todo_list = receive do
       message ->
@@ -53,6 +67,9 @@ defmodule TodoServer do
     send(caller, {:todo_entries, Todo.entries(todo_list, date)})
     todo_list
   end
+
+  defp process_message(todo_list, {:update_entry, entry_id, updater_fun}),
+    do: Todo.update_entry(todo_list, entry_id, updater_fun)
 
   defp process_message(todo_list, _), do: todo_list
 end
