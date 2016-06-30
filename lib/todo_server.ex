@@ -14,13 +14,19 @@ defmodule TodoServer do
   """
 
   @doc """
-  Start server
+  Start a server.
   """
   def start, do: spawn(fn -> loop(Todo.new) end)
 
+  @doc """
+  Add a new entry to the to-do list.
+  """
   def add_entry(todo_server, new_entry),
     do: send(todo_server, {:add_entry, new_entry})
 
+  @doc """
+  Return all entries from one date in the to-do list.
+  """
   def entries(todo_server, date) do
     send(todo_server, {:entries, self, date})
 
